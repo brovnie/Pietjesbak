@@ -28,6 +28,7 @@ public class Game extends Activity {
         TextView playerName2 = (TextView)findViewById(R.id.player2);
         playerName2.setText(playerText2);
     }
+    // method ocClick
 public void onClickRollTheDice(View view){
     TextView results = (TextView)findViewById(R.id.roll_results);
     results.setText(giveNumbers());
