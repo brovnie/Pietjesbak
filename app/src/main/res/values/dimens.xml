@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_screen">16dp</dimen>
+    <dimen name="logo_font_size">32sp</dimen>
+    <dimen name="marginTop_screen1">16sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+</resources>

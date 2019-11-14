@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Pietjesbak</string>
+    <string name="btn_play">PLAY</string>
+    <string name="player1_name_hint">Player 1</string>
+    <string name="player2_name_hint">Player 2</string>
+    <string name="title_activity_game">Game</string>
+</resources>
