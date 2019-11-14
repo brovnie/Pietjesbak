@@ -33,4 +33,23 @@
         android:layout_centerHorizontal="true"
         android:textSize="@dimen/logo_font_size"
         />
+    <Button
+        android:id="@+id/btn_roll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/roll"
+        android:layout_below="@id/player2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/marginTop_screen1"
+        android:onClick="onClickRollTheDice"
+        />
+    <TextView
+        android:id="@+id/roll_results"
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_roll"
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/logo_font_size"
+        />
 </RelativeLayout>

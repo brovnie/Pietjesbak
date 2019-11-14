@@ -4,4 +4,5 @@
     <string name="player1_name_hint">Player 1</string>
     <string name="player2_name_hint">Player 2</string>
     <string name="title_activity_game">Game</string>
+    <string name="roll">Roll</string>
 </resources>

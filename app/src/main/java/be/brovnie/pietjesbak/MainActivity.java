@@ -27,7 +27,7 @@ public void onClickPlayersNames (View view){
     //Using constants so both activities use the same name
     intent.putExtra(Game.PLAYER1_NAME,playername1);
     intent.putExtra(Game.PLAYER2_NAME,playername2);
-    //Start zithe the intent
+    //Start with the intent
     startActivity(intent);
 }
 } //end
