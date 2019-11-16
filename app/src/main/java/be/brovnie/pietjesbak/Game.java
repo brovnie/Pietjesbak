@@ -16,6 +16,9 @@ public class Game extends Activity {
     boolean player2;
     int counter = 0;
     int max = 0;
+    int totalScorePlayer1 = 0;
+    int totalScorePlayer2 = 0;
+    int best = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +31,11 @@ public class Game extends Activity {
         playerName1.setText(playerText1);
         TextView playerName2 = (TextView)findViewById(R.id.player2);
         String playerText2 = intent.getStringExtra(PLAYER2_NAME);
-
         playerName2.setText(playerText2);
+        TextView player1Score = (TextView)findViewById(R.id.player1Score);
+        TextView player2Score = (TextView)findViewById(R.id.player2Score);
+        player1Score.setText(Integer.toString(totalScorePlayer1));
+        player2Score.setText(Integer.toString(totalScorePlayer2));
         player1 = true;
         player2 = false;
     }
@@ -38,6 +44,11 @@ public class Game extends Activity {
 public void onClickRollTheDice(View view){
     TextView playerName1 = (TextView)findViewById(R.id.player1);
     TextView playerName2 = (TextView)findViewById(R.id.player2);
+    TextView player1Score = (TextView)findViewById(R.id.player1Score);
+    TextView player2Score = (TextView)findViewById(R.id.player2Score);
+    player1Score.setText(Integer.toString(totalScorePlayer1));
+    player2Score.setText(Integer.toString(totalScorePlayer2));
+
     if(counter == 3){
         counter = 0;
 
@@ -52,6 +63,7 @@ public void onClickRollTheDice(View view){
        if(player1){
             playerName1.setBackgroundColor(Color.GREEN);
             playerName2.setBackgroundColor(Color.TRANSPARENT);
+
         } else {
             playerName2.setBackgroundColor(Color.GREEN);
             playerName1.setBackgroundColor(Color.TRANSPARENT);
@@ -63,10 +75,16 @@ public void onClickRollTheDice(View view){
     int sum = countResult(arrNumbers);
     TextView resultsSum = (TextView)findViewById(R.id.roll_sum);
     resultsSum.setText(Integer.toString(sum));
-    int best = findBestResult(sum);
+    best = findBestResult(sum);
     TextView bestScore = (TextView)findViewById(R.id.roll_bestScore);
     bestScore.setText("Best score so far " + Integer.toString(best));
-
+    if(counter == 2) {
+        if (player1 == true) {
+            totalScorePlayer1 = totalScorePlayer2 + best;
+        } else {
+            totalScorePlayer2 = totalScorePlayer2 + best;
+        }
+    }
     counter++;
 }
 
@@ -97,7 +115,6 @@ public static int countResult(int[] arr){
         }
       return sum;
 }
-
 public int findBestResult(int a){
         if(counter == 0){
             max = 0;
