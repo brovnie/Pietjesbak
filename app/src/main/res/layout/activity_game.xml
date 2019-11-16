@@ -61,4 +61,13 @@
         android:layout_centerHorizontal="true"
         android:textSize="@dimen/logo_font_size"
         />
+    <TextView
+        android:id="@+id/roll_bestScore"
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/roll_sum"
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/logo_font_size"
+        />
 </RelativeLayout>
