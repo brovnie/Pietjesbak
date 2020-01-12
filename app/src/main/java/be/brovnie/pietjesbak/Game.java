@@ -2,7 +2,6 @@ package be.brovnie.pietjesbak;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.os.Handler;
 import android.content.Intent;
 import android.widget.TextView;
 import android.view.View;
@@ -19,16 +18,19 @@ public class Game extends Activity {
     private TextView playerName2;
     private TextView results;
     private TextView bestScore;
+    private TextView resultsSum;
     private boolean firstGame;
     private String playerText1;
     private String playerText2;
     boolean player1;
     int counter = 0;
-    int max = 0;
     int totalScorePlayer1 = 0;
     int totalScorePlayer2 = 0;
-    int best = 0;
-    final Handler handler = new Handler();
+    private int sum;
+    private int player1Chances = 6;
+    private int player2Chances = 6;
+    //final Handler handler = new Handler();
+
     @Override
 
         protected void onCreate (Bundle savedInstanceState){
@@ -48,8 +50,11 @@ public class Game extends Activity {
             player2Score.setText(Integer.toString(totalScorePlayer2));
             results = (TextView)findViewById(R.id.roll_results);
             bestScore = (TextView)findViewById(R.id.roll_bestScore);
+            player2Score = (TextView)findViewById(R.id.player2Score);
+            resultsSum = (TextView)findViewById(R.id.roll_sum);
             player1 = true;
             firstGame = true;
+
         }
 
         //Steps:
@@ -76,15 +81,23 @@ public void onClickRollTheDice(View view){
    // TextView playerName1 = (TextView)findViewById(R.id.player1);
     //playerName2 = (TextView)findViewById(R.id.player2);
     //player1Score = (TextView)findViewById(R.id.player1Score);
-    TextView player2Score = (TextView)findViewById(R.id.player2Score);
+
     if(counter == 3){
         counter = 0;
+        if(totalScorePlayer1>totalScorePlayer2){
+            player1Chances--;
+        } else if (totalScorePlayer1<totalScorePlayer2){
+            player2Chances--;
+        }
         if(player1 == true){
             player1 = false;
+            player1Score.setText(Integer.toString(player1Chances));
         } else {
             player1 = true;
+            player2Score.setText(Integer.toString(player2Chances));
         }
     }
+    // change color
     if(player1){
         playerName1.setBackgroundColor(Color.GREEN);
         playerName2.setBackgroundColor(Color.TRANSPARENT);
@@ -93,6 +106,7 @@ public void onClickRollTheDice(View view){
         playerName2.setBackgroundColor(Color.GREEN);
         playerName1.setBackgroundColor(Color.TRANSPARENT);
     }
+    //
     //First game
     if(firstGame == true){
         int[] arrNumbers = giveNumbers();
@@ -125,14 +139,31 @@ public void onClickRollTheDice(View view){
             totalScorePlayer2 = 0;
             totalScorePlayer2 = 0;
         }
+        //
         //ROLL DICE
     } else {
-
+        //clean screen
+        bestScore.setText("");
+        //generate numbers
+        int[] arrNumbers = giveNumbers();
+        String n = arrNumbers[0] + " " + arrNumbers[1] + " " + arrNumbers[2];
+        results.setText(n);
+        sum = countResult(arrNumbers);
+        resultsSum.setText(Integer.toString(sum));
+        counter++;
+        //results
+            if(player1 == true) {
+                totalScorePlayer1 = sum;
+            } else {
+                totalScorePlayer2 = sum;
+            }
+            
+        /*
     int[] arrNumbers = giveNumbers();
     String n = arrNumbers[0] + " " + arrNumbers[1] + " " + arrNumbers[2];
     results.setText(n);
     int sum = countResult(arrNumbers);
-    TextView resultsSum = (TextView)findViewById(R.id.roll_sum);
+
     resultsSum.setText(Integer.toString(sum));
         player1Score.setText(Integer.toString(totalScorePlayer1));
         player2Score.setText(Integer.toString(totalScorePlayer2));
@@ -141,21 +172,21 @@ public void onClickRollTheDice(View view){
     bestScore.setText("Best score so far " + Integer.toString(best));
     if(counter == 3) {
         if (player1 == true) {
-            totalScorePlayer1 = totalScorePlayer2 + best;
+            totalScorePlayer1 += best;
         } else {
-            totalScorePlayer2 = totalScorePlayer2 + best;
+            totalScorePlayer2 += best;
         }
-    }
-    counter++; }
+    }*/
+     }
 } // end onClickRollTheDice
     public void onClickStop(View view){
         counter = 0;
         if(player1 == true){
-            totalScorePlayer1 = totalScorePlayer2 + best;
+            totalScorePlayer1 += sum;
             player1 = false;
         }else {
             player1 = true;
-            totalScorePlayer2 = totalScorePlayer2 + best;
+            totalScorePlayer2 += sum;
         }
 
     }
@@ -187,7 +218,7 @@ public static int countResult(int[] arr){
         }
       return sum;
 }
-public int findBestResult(int a){
+/*public int findBestResult(int a){
         if(counter == 0){
             max = 0;
         }
@@ -195,5 +226,5 @@ public int findBestResult(int a){
             max = a;
         }
         return max;
-}
+}*/
 }
