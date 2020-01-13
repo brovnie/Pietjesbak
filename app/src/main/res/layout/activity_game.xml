@@ -71,6 +71,17 @@
         android:layout_toRightOf="@id/btn_roll"
         android:onClick="onClickStop"
         />
+
+    <Button
+        android:id="@+id/btn_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/roll_bestScore"
+        android:layout_marginTop="104dp"
+        android:onClick="onClickShare"
+        android:layout_centerHorizontal="true"
+        android:text="SHARE" />
+
     <TextView
         android:id="@+id/roll_results"
         android:text=""

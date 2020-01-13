@@ -7,10 +7,23 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.view.View;
 import android.graphics.Color;
+// for sensor
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.widget.Toast;
 
 
-public class Game extends Activity {
+public class Game extends Activity  {
+    //sensor
+    private SensorManager sm;
+    private float acelVal;
+    private float acelLast;
+    private float shake;
 
+    //variables
     public static final String PLAYER1_NAME = "player1";
     public static final String PLAYER2_NAME = "player2";
     private  TextView player1Score;
@@ -21,6 +34,8 @@ public class Game extends Activity {
     private TextView bestScore;
     private TextView resultsSum;
     private Button rollDices;
+    private Button stopBtn;
+    private Button share;
     private boolean firstGame;
     private String playerText1;
     private String playerText2;
@@ -56,8 +71,18 @@ public class Game extends Activity {
             player2Score = (TextView)findViewById(R.id.player2Score);
             resultsSum = (TextView)findViewById(R.id.roll_sum);
             rollDices = (Button) findViewById(R.id.btn_roll);
+            stopBtn = (Button) findViewById(R.id.btn_stop);
+            share = (Button) findViewById(R.id.btn_share);
+            share.setVisibility(View.GONE);
             player1 = true;
             firstGame = true;
+
+            //sensor
+        sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sm.registerListener(sensorListener, sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        acelVal = SensorManager.GRAVITY_EARTH;
+        acelLast = SensorManager.GRAVITY_EARTH;
+        shake = 0.00f;
         }
 
         //Steps:
@@ -104,7 +129,6 @@ public void onClickRollTheDice(View view){
         changeColors();
     }
 
-    //
     //First game
     if(firstGame == true){
 
@@ -145,10 +169,7 @@ public void onClickRollTheDice(View view){
         //ROLL DICE
     } else {
         //clean screen
-        /*if(player1 == true){
-            bestScore.setText("It's your turn!");
-        }
-*/      bestScore.setText("");
+        bestScore.setText("");
         //generate numbers
         int[] arrNumbers = giveNumbers();
         String n = arrNumbers[0] + " " + arrNumbers[1] + " " + arrNumbers[2];
@@ -175,7 +196,26 @@ public void onClickRollTheDice(View view){
         }
     }
 
-
+public void onClickShare(View view){
+    Intent intent = new Intent(Intent.ACTION_SEND);
+    //Extra information - text will form the body of the message
+    intent.setType("text/plain");
+    String messageText;
+    if(player1Chances == 0){
+        messageText = playerText1 + " have won the pietjesbak game";
+    } else {
+        messageText = playerText2 + " have won the pietjesbak game";
+    }
+    intent.putExtra(Intent.EXTRA_TEXT, messageText);
+    /*
+     * Create chooser - user always have to choose how message is send (sms, twitter, whatsapp...)
+     * The createChooser() method is able to deal with situations where no activities can perform a particular action.
+     * */
+    //get string from value/strings.xml name=""
+    String chooserTitle = getString(R.string.chooser);
+    Intent chosenIntent = Intent.createChooser(intent, chooserTitle);
+    startActivity(chosenIntent);
+}
 
 public static int[] giveNumbers(){
     int[] dices = new int[3];
@@ -215,7 +255,34 @@ public void changeColors(){
     }
 }
 public void  weHaveAWinner(){
-    bestScore.setText("We have a winner");
+    bestScore.setText("We have a winner!!!!!!!!");
+    resultsSum.setText("");
+    results.setText("");
     rollDices.setVisibility(View.GONE);
-}
+    stopBtn.setVisibility(View.GONE);
+    share.setVisibility(View.VISIBLE);
+
+    }
+    private final SensorEventListener sensorListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+
+            float x = sensorEvent.values[0];
+            float y = sensorEvent.values[1];
+            float z = sensorEvent.values[2];
+
+            acelLast = acelVal;
+            acelVal = (float) Math.sqrt((double) (x * x + y * y + z * z));
+            float delta = acelVal - acelLast;
+            shake = shake * 0.9f + delta;
+
+         if (shake > 12) {
+            Toast.makeText(Game.this, "Calm down please", Toast.LENGTH_LONG).show();
+        }
+        }
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
 }
