@@ -3,6 +3,7 @@ package be.brovnie.pietjesbak;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.widget.Button;
 import android.widget.TextView;
 import android.view.View;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ public class Game extends Activity {
     private TextView results;
     private TextView bestScore;
     private TextView resultsSum;
+    private Button rollDices;
     private boolean firstGame;
     private String playerText1;
     private String playerText2;
@@ -29,6 +31,7 @@ public class Game extends Activity {
     private int sum;
     private int player1Chances = 6;
     private int player2Chances = 6;
+    private int rounds = 0;
     //final Handler handler = new Handler();
 
     @Override
@@ -46,15 +49,15 @@ public class Game extends Activity {
             playerName2.setText(playerText2);
             player1Score = (TextView) findViewById(R.id.player1Score);
             player2Score = (TextView) findViewById(R.id.player2Score);
-            player1Score.setText(Integer.toString(totalScorePlayer1));
-            player2Score.setText(Integer.toString(totalScorePlayer2));
+            player1Score.setText(Integer.toString(player1Chances));
+            player2Score.setText(Integer.toString(player2Chances));
             results = (TextView)findViewById(R.id.roll_results);
             bestScore = (TextView)findViewById(R.id.roll_bestScore);
             player2Score = (TextView)findViewById(R.id.player2Score);
             resultsSum = (TextView)findViewById(R.id.roll_sum);
+            rollDices = (Button) findViewById(R.id.btn_roll);
             player1 = true;
             firstGame = true;
-
         }
 
         //Steps:
@@ -62,17 +65,15 @@ public class Game extends Activity {
         //KO 2. p1 rzuca 3 kostkami
         // KO     i. generuj 3 numery - random
         // KO     ii.podlicz numery
-        // 3. p1 moze zdecydowac zeby rzucic jeszcze raz albo odpuscic
-        //      i. pojawia sie przycisk "stoefen" po kliknieciu tura p1 sie konczy
+        // OK 3. p1 moze zdecydowac zeby rzucic jeszcze raz albo odpuscic
+        // KO     i. pojawia sie przycisk "stoefen" po kliknieciu tura p1 sie konczy
         // 4. p1 wybiera iloma kostkami chce rzucic wszystkimi(3), 2, 1
         //      i.
-        // 5. p1 rzuca kostkami
-        // 6. powtorzyc step 3,4,5 , p1 moze max 3 razy w ciagu tury rwucic kostkami
-        // 7. ostatni rezultat zostale
-        // 8. p1 to samo co p2 i moze tyle razy rwucic jak p1 (jesli on zatrzymuje sie na pierwszym razie p2 moze tlko 1 raz rzucic)
-        // 9. player ktory wyrzucil wieksza liczbe wygral i moze zdrapac jedena kreske
-        //      a) jesli rzucil 3 takie same numery moze zdrapac 2 kreski
-        // 10. wygrywa ten co nie ma juz dostepnych kresek
+        // OK 5. p1 rzuca kostkami
+        // OK 6. powtorzyc step 3,4,5 , p1 moze max 3 razy w ciagu tury rwucic kostkami
+        // OK 7. ostatni rezultat zostale
+        // OK 8. p1 to samo co p2 i moze tyle razy rwucic jak p1 (jesli on zatrzymuje sie na pierwszym razie p2 moze tlko 1 raz rzucic)
+        // OK 10. wygrywa ten co nie ma juz dostepnych kresek
         // extra buttons automatycznie wyrzuci zand, 3 appen
 
     // method ocClick
@@ -84,31 +85,29 @@ public void onClickRollTheDice(View view){
 
     if(counter == 3){
         counter = 0;
-        if(totalScorePlayer1>totalScorePlayer2){
-            player1Chances--;
-        } else if (totalScorePlayer1<totalScorePlayer2){
-            player2Chances--;
-        }
+        //who won
+        rounds++;
+                if(rounds%2 == 0) {
+                    if (totalScorePlayer1 > totalScorePlayer2) {
+                        player1Chances--;
+                    } else if (totalScorePlayer1 < totalScorePlayer2) {
+                        player2Chances--;
+                    }
+                    player1Score.setText(Integer.toString(player1Chances));
+                    player2Score.setText(Integer.toString(player2Chances));
+                }
         if(player1 == true){
             player1 = false;
-            player1Score.setText(Integer.toString(player1Chances));
         } else {
             player1 = true;
-            player2Score.setText(Integer.toString(player2Chances));
         }
+        changeColors();
     }
-    // change color
-    if(player1){
-        playerName1.setBackgroundColor(Color.GREEN);
-        playerName2.setBackgroundColor(Color.TRANSPARENT);
 
-    } else {
-        playerName2.setBackgroundColor(Color.GREEN);
-        playerName1.setBackgroundColor(Color.TRANSPARENT);
-    }
     //
     //First game
     if(firstGame == true){
+
         int[] arrNumbers = giveNumbers();
         String n = arrNumbers[0] + " " + arrNumbers[1] + " " + arrNumbers[2];
         results.setText(n);
@@ -127,14 +126,17 @@ public void onClickRollTheDice(View view){
                 bestScore.setText(playerText1 +" begins!");
                 firstGame = false;
                 player1 = true;
+                changeColors();
             } else if (totalScorePlayer1 < totalScorePlayer2){
                 bestScore.setText(playerText2 + " begins!");
                 firstGame = false;
                 player1 = false;
+                changeColors();
             } else{
                 bestScore.setText("Draw! Let's try again");
                 firstGame = true;
             }
+
             counter = 0;
             totalScorePlayer2 = 0;
             totalScorePlayer2 = 0;
@@ -143,7 +145,10 @@ public void onClickRollTheDice(View view){
         //ROLL DICE
     } else {
         //clean screen
-        bestScore.setText("");
+        /*if(player1 == true){
+            bestScore.setText("It's your turn!");
+        }
+*/      bestScore.setText("");
         //generate numbers
         int[] arrNumbers = giveNumbers();
         String n = arrNumbers[0] + " " + arrNumbers[1] + " " + arrNumbers[2];
@@ -157,39 +162,20 @@ public void onClickRollTheDice(View view){
             } else {
                 totalScorePlayer2 = sum;
             }
-            
-        /*
-    int[] arrNumbers = giveNumbers();
-    String n = arrNumbers[0] + " " + arrNumbers[1] + " " + arrNumbers[2];
-    results.setText(n);
-    int sum = countResult(arrNumbers);
-
-    resultsSum.setText(Integer.toString(sum));
-        player1Score.setText(Integer.toString(totalScorePlayer1));
-        player2Score.setText(Integer.toString(totalScorePlayer2));
- best = findBestResult(sum);
-    TextView bestScore = (TextView)findViewById(R.id.roll_bestScore);
-    bestScore.setText("Best score so far " + Integer.toString(best));
-    if(counter == 3) {
-        if (player1 == true) {
-            totalScorePlayer1 += best;
-        } else {
-            totalScorePlayer2 += best;
-        }
-    }*/
      }
+    if(player1Chances == 0 || player2Chances == 0 ){
+        weHaveAWinner();
+    }
 } // end onClickRollTheDice
     public void onClickStop(View view){
-        counter = 0;
-        if(player1 == true){
-            totalScorePlayer1 += sum;
-            player1 = false;
-        }else {
-            player1 = true;
-            totalScorePlayer2 += sum;
+        counter = 3;
+        bestScore.setText("Stopped!");
+        if(player1Chances == 0 || player2Chances == 0 ){
+            weHaveAWinner();
         }
-
     }
+
+
 
 public static int[] giveNumbers(){
     int[] dices = new int[3];
@@ -218,13 +204,18 @@ public static int countResult(int[] arr){
         }
       return sum;
 }
-/*public int findBestResult(int a){
-        if(counter == 0){
-            max = 0;
-        }
-        if( a > max ){
-            max = a;
-        }
-        return max;
-}*/
+public void changeColors(){
+    if(player1){
+        playerName1.setBackgroundColor(Color.GREEN);
+        playerName2.setBackgroundColor(Color.TRANSPARENT);
+
+    } else {
+        playerName2.setBackgroundColor(Color.GREEN);
+        playerName1.setBackgroundColor(Color.TRANSPARENT);
+    }
+}
+public void  weHaveAWinner(){
+    bestScore.setText("We have a winner");
+    rollDices.setVisibility(View.GONE);
+}
 }
